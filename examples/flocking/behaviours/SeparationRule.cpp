@@ -6,24 +6,29 @@
 Vector2f SeparationRule::computeForce(const std::vector<Boid*>& neighborhood, Boid* boid) {
   // Try to avoid boids too close
   Vector2f separatingForce = Vector2f::zero();
-  Vector2f negativeVector = Vector2f(-1.0f, -1.0f);
 
   float desiredDistance = desiredMinimalDistance;
 
   if (neighborhood.empty()) return Vector2f::zero();
 
   Vector2f centerMass;
+  int i = 0;
   for (const Boid* b : neighborhood) 
   {
-    if ((b->getPosition() - boid->getPosition()).getMagnitude() >= desiredDistance) continue;
+    if (Vector2f::DistanceSquared(b->getPosition(), boid->getPosition()) >= (desiredDistance * desiredDistance)) continue;
     centerMass += b->getPosition();
+    i++;
   }
-  centerMass = centerMass / neighborhood.size();
-  separatingForce = centerMass - boid->getPosition();
+
+  if (i == 0) return Vector2f::zero();
+  centerMass = centerMass / i;
+
+  separatingForce = boid->getPosition() - centerMass;
+
 
   if (separatingForce.getMagnitude() >= desiredDistance) return Vector2f::zero();
 
-  separatingForce = separatingForce.normalized() * -1;
+  separatingForce = separatingForce.normalized();
 
   return separatingForce;
 }

@@ -5,9 +5,11 @@
 #include "engine/Engine.h"
 
 Vector2f WindRule::computeForce(const std::vector<Boid*>& neighborhood, Boid* boid) {
-  // todo: add a wind force here
-  // hint: use the windAngle variable
-  return Vector2f::zero();
+  Vector2f windForce = Vector2f::zero();
+  // Wind angle is in radians
+  windForce = {cos(windAngle), sin(windAngle)};
+
+  return windForce.normalized();
 }
 
 bool WindRule::drawImguiRuleExtra() {
