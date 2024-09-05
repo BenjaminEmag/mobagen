@@ -25,12 +25,11 @@ Vector2f SeparationRule::computeForce(const std::vector<Boid*>& neighborhood, Bo
 
   separatingForce = boid->getPosition() - centerMass;
 
-
   if (separatingForce.getMagnitude() >= desiredDistance) return Vector2f::zero();
 
-  separatingForce = separatingForce.normalized();
+  separatingForce = separatingForce.normalized() / ((Vector2f::Distance(centerMass, boid->getPosition()) / desiredDistance));
 
-  return separatingForce;
+  return separatingForce * 0.5;
 }
 
 bool SeparationRule::drawImguiRuleExtra() {

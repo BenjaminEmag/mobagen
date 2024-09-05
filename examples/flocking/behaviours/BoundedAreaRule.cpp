@@ -6,16 +6,21 @@
 Vector2f BoundedAreaRule::computeForce(const std::vector<Boid*>& neighborhood, Boid* boid) {
   Vector2f force = Vector2f::zero();
 
-  this->world->engine->window->size();
+  auto size = this->world->engine->window->size();
+  auto dist = (float)desiredDistance;
 
-  Vector2f futurePos = boid->getPosition() + boid->getVelocity();
+  Vector2f pos = boid->getPosition() + boid->getVelocity();
 
-  SDL_Point point{futurePos.x, futurePos.y};
-  SDL_Rect rect{};
+  SDL_Point point{pos.x, pos.y};
+  SDL_Rect rect{dist, dist, size.x - dist, size.y - dist};
 
 
+  if (SDL_PointInRect(&point, &rect)) return Vector2f::zero();
+  
 
-  return force;
+
+  boid->setSpeed(0.0);
+  return Vector2f::zero();
 }
 
 bool BoundedAreaRule::drawImguiRuleExtra() {
@@ -39,6 +44,8 @@ void BoundedAreaRule::draw(const Boid& boid, SDL_Renderer* renderer) const {
   FlockingRule::draw(boid, renderer);
   auto size = this->world->engine->window->size();
   auto dist = (float)desiredDistance;
+
+
 
   // Draw a rectangle on the map
   Polygon::DrawLine(renderer, Vector2f(dist, dist), Vector2f(size.x - dist, dist), Color::Red);                    // TOP
