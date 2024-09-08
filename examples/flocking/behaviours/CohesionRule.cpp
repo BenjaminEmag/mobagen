@@ -14,6 +14,7 @@ Vector2f CohesionRule::computeForce(const std::vector<Boid*>& neighborhood, Boid
   }
   centerMass = centerMass / neighborhood.size();
 
+  // return zero if center mass is directly atop boid 
   if (boid->getPosition() - centerMass == Vector2f::zero()) return Vector2f::zero();
 
   cohesionForce = centerMass - boid->getPosition();

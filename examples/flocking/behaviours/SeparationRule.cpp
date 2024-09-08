@@ -15,6 +15,7 @@ Vector2f SeparationRule::computeForce(const std::vector<Boid*>& neighborhood, Bo
   int i = 0;
   for (const Boid* b : neighborhood) 
   {
+      // accumulate position of boids within the desired seperation distance
     if (Vector2f::DistanceSquared(b->getPosition(), boid->getPosition()) >= (desiredDistance * desiredDistance)) continue;
     centerMass += b->getPosition();
     i++;
@@ -27,8 +28,10 @@ Vector2f SeparationRule::computeForce(const std::vector<Boid*>& neighborhood, Bo
 
   if (separatingForce.getMagnitude() >= desiredDistance) return Vector2f::zero();
 
+  // divide by desired distance to make the force proportional to the distance
   separatingForce = separatingForce.normalized() / ((Vector2f::Distance(centerMass, boid->getPosition()) / desiredDistance));
 
+  // arbitrary constant value that makes the seperation feel better
   return separatingForce * 0.5;
 }
 

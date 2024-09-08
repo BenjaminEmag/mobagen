@@ -2,25 +2,37 @@
 #include "../gameobjects/Boid.h"
 #include "../gameobjects/World.h"
 #include "engine/Engine.h"
+#include <iostream>
 
 Vector2f BoundedAreaRule::computeForce(const std::vector<Boid*>& neighborhood, Boid* boid) {
-  Vector2f force = Vector2f::zero();
+  Vector2f wallForce = Vector2f::zero();
 
   auto size = this->world->engine->window->size();
   auto dist = (float)desiredDistance;
+  float threshold = dist;
 
   Vector2f pos = boid->getPosition() + boid->getVelocity();
 
-  SDL_Point point{pos.x, pos.y};
-  SDL_Rect rect{dist, dist, size.x - dist, size.y - dist};
-
-
+  // Use SDL to return no force if boid is inside Boundry
+  SDL_Point point{static_cast<int>(pos.x), static_cast<int>(pos.y)};
+  SDL_Rect rect{static_cast<int>(dist), static_cast<int>(dist), static_cast<int>(size.x - 2 * dist), static_cast<int>(size.y - 2 * dist)};
   if (SDL_PointInRect(&point, &rect)) return Vector2f::zero();
-  
 
+  // set boundry values based off threshold and size of box
+  float leftBoundary = dist + threshold;
+  float rightBoundary = size.x - dist - threshold;
+  float topBoundary = dist + threshold;
+  float bottomBoundary = size.y - dist - threshold;
 
-  boid->setSpeed(0.0);
-  return Vector2f::zero();
+  // divide by threshold to make the force proportional to how far away you are from the wall 
+  // Love ternary operator
+  wallForce.x = (pos.x < leftBoundary) ? (leftBoundary - pos.x) / threshold :
+                (pos.x > rightBoundary) ? (rightBoundary - pos.x) / threshold : 0;
+
+  wallForce.y = (pos.y < topBoundary) ? (topBoundary - pos.y) / threshold :
+                (pos.y > bottomBoundary) ? (bottomBoundary - pos.y) / threshold : 0;
+
+  return wallForce;
 }
 
 bool BoundedAreaRule::drawImguiRuleExtra() {
@@ -44,8 +56,6 @@ void BoundedAreaRule::draw(const Boid& boid, SDL_Renderer* renderer) const {
   FlockingRule::draw(boid, renderer);
   auto size = this->world->engine->window->size();
   auto dist = (float)desiredDistance;
-
-
 
   // Draw a rectangle on the map
   Polygon::DrawLine(renderer, Vector2f(dist, dist), Vector2f(size.x - dist, dist), Color::Red);                    // TOP
