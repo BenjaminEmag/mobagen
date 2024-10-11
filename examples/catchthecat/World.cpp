@@ -237,3 +237,21 @@ bool World::catWinsOnSpace(Point2D point) {
   auto sideOver2 = sideSize / 2;
   return abs(point.x) == sideOver2 || abs(point.y) == sideOver2;
 }
+
+std::vector<Point2D> World::getVisitableNeighbors(const Point2D& position) {
+  std::vector<Point2D> neighbors;
+
+  std::vector<Point2D> directions = {NE(position), NW(position), E(position), W(position), SE(position), SW(position)};
+
+  for (const auto& neighbor : directions) {
+    if (isValidPosition(neighbor) && !getContent(neighbor)) 
+      neighbors.push_back(neighbor);
+  }
+
+  return neighbors;
+}
+
+bool World::isBorder(const Point2D& p) {
+  int sideOver2 = sideSize / 2;
+  return (abs(p.x) == sideOver2 || abs(p.y) == sideOver2);
+}

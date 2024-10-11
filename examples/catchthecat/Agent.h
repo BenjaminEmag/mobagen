@@ -12,6 +12,7 @@ public:
   virtual Point2D Move(World*) = 0;
 
   std::vector<Point2D> generatePath(World* w);
+  float heuristic(const Point2D& p, int sideSize);
 };
 
 #endif  // AGENT_H

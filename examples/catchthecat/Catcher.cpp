@@ -2,10 +2,34 @@
 #include "World.h"
 
 Point2D Catcher::Move(World* world) {
-  auto side = world->getWorldSideSize() / 2;
-  for (;;) {
-    Point2D p = {Random::Range(-side, side), Random::Range(-side, side)};
-    auto cat = world->getCat();
-    if (cat.x != p.x && cat.y != p.y && !world->getContent(p)) return p;
+  Point2D catPosition = world->getCat();
+  std::vector<Point2D> path = generatePath(world);
+
+  // 6 is a magic number gotten from testing
+  if (path.size() > (world->getWorldSideSize() / 6)) {
+    int blockIndex = world->getWorldSideSize() / 6;
+
+    Point2D blockPosition = path[blockIndex];
+
+    if (blockPosition != catPosition) {
+      return blockPosition;
+    }
+  }
+
+  if (!path.empty()) {
+    Point2D lastPosition = path.back();
+
+    if (!world->getContent(lastPosition) && lastPosition != catPosition) {
+      return lastPosition;
+    }
+  }
+
+  std::vector<Point2D> potentialBlocks = {World::NE(catPosition), World::NW(catPosition), World::E(catPosition),
+                                          World::W(catPosition),  World::SE(catPosition), World::SW(catPosition)};
+
+  for (const Point2D& position : potentialBlocks) {
+    if (!world->getContent(position) && position != catPosition) {
+      return position;
+    }
   }
 }
