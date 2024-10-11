@@ -6,8 +6,8 @@ Point2D Catcher::Move(World* world) {
   std::vector<Point2D> path = generatePath(world);
 
   // 6 is a magic number gotten from testing
-  if (path.size() > (world->getWorldSideSize() / 6)) {
-    int blockIndex = world->getWorldSideSize() / 6;
+  if (path.size() > (world->getWorldSideSize() / 5)) {
+    int blockIndex = world->getWorldSideSize() / 5;
 
     Point2D blockPosition = path[blockIndex];
 

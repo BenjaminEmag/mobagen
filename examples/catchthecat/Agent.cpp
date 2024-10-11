@@ -42,7 +42,6 @@ std::vector<Point2D> Agent::generatePath(World* w) {
 
     std::vector<Point2D> neighbors = w->getVisitableNeighbors(currNode.point);
 
-    // getVisitableNeightbors(world, current) returns a vector of neighbors that are not visited, not cat, not block, not in the queue
     for (Point2D& point : neighbors) {
       if (visited.find(point) == visited.end()) {
         int newAccDist = currNode.accDist + 1;
